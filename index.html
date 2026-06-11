@@ -65,7 +65,7 @@ tr:hover{background:rgba(255,255,255,0.05)}
 <script>
 // ===== CONFIG =====
 // Get FREE API key: https://www.api-football.com/ (100 req/day)
-const API_KEY = '716e81beaffba9576a319751d1946adb';
+const API_KEY = ''; // Not needed
 const LEAGUE_ID = 1; // World Cup ID on api-football
 const SEASON = 2026;
 const CACHE_DURATION = 30 * 60 * 1000; // 30 minutes in ms
@@ -190,7 +190,7 @@ function renderAll(){renderShame();renderTeams();renderMatches();}
 
 // ===== MATCH DATA (manually updated) =====
 const matchData = [
-  {date:"2026-06-11",home:"Mexico",away:"South Africa",hg:2,ag:0,hy:0,hr:1,ay:0,ar:2},
+  {date:"2026-06-11",home:"Mexico",away:"South Africa",hg:2,ag:0,hy:1,hr:1,ay:2,ar:2},
 ];
 
 function loadMatchData(){
