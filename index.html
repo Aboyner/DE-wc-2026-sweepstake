@@ -188,7 +188,29 @@ function getOwner(team){for(let p in assignments){if(assignments[p].teams.includ
 
 function renderAll(){renderShame();renderTeams();renderMatches();}
 
-// ===== API FETCH (API-Football) =====
+// ===== MATCH DATA (manually updated) =====
+const matchData = [
+  {date:"2026-06-11",home:"Mexico",away:"South Africa",hg:2,ag:0,hy:0,hr:1,ay:0,ar:2},
+];
+
+function loadMatchData(){
+  // Reset stats
+  Object.keys(teamStats).forEach(t=>{teamStats[t]={gf:0,ga:0,yellows:0,reds:0,played:0,won:0,drawn:0,lost:0,stage:'Group Stage'};});
+  matchResults=[];
+  
+  matchData.forEach(m=>{
+    const home=m.home,away=m.away;
+    if(teamStats[home]){teamStats[home].gf+=m.hg;teamStats[home].ga+=m.ag;teamStats[home].yellows+=m.hy;teamStats[home].reds+=m.hr;teamStats[home].played++;if(m.hg>m.ag)teamStats[home].won++;else if(m.hg===m.ag)teamStats[home].drawn++;else teamStats[home].lost++;}
+    if(teamStats[away]){teamStats[away].gf+=m.ag;teamStats[away].ga+=m.hg;teamStats[away].yellows+=m.ay;teamStats[away].reds+=m.ar;teamStats[away].played++;if(m.ag>m.hg)teamStats[away].won++;else if(m.ag===m.hg)teamStats[away].drawn++;else teamStats[away].lost++;}
+    matchResults.push({home,away,homeGoals:m.hg,awayGoals:m.ag,date:m.date});
+  });
+  
+  matchResults.sort((a,b)=>new Date(b.date)-new Date(a.date));
+  document.getElementById('statusBar').innerHTML='✅ Data loaded | Last updated: June 11, 2026 | Matchday 1';
+  renderAll();
+}
+
+// Replaced API fetch - now uses hardcoded data
 async function fetchFromAPI(){
   if(!API_KEY){
     document.getElementById('statusBar').innerHTML='⚠️ No API key set. Get one free at <a href="https://www.api-football.com/" style="color:#f5af19">api-football.com</a> — paste it in the HTML file where it says API_KEY. <button class="refresh-btn" onclick="forceRefresh()">🔄 Retry</button>';
@@ -256,15 +278,6 @@ async function fetchFromAPI(){
 function forceRefresh(){localStorage.removeItem(CACHE_KEY);fetchFromAPI();}
 
 // ===== INIT =====
-(async function init(){
-  const cached=getCache();
-  if(cached){
-    teamStats=cached.teamStats;matchResults=cached.matches||[];
-    const age=getCacheAge();
-    document.getElementById('statusBar').innerHTML='📦 Loaded from cache ('+age+' min ago) <button class="refresh-btn" onclick="forceRefresh()">🔄 Force Refresh</button>';
-    renderAll();
-  }else{
-    await fetchFromAPI();
-  }
-})();
+// Load data on page load
+loadMatchData();
 </script></body></html>
