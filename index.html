@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>World Cup 2026 Sweepstake Tracker</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',sans-serif;background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);color:#fff;min-height:100vh;padding:20px}
+.header{text-align:center;padding:20px;margin-bottom:20px}
+.header h1{font-size:2.2em;background:linear-gradient(90deg,#f5af19,#f12711);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.header p{color:#888;margin-top:5px}
+.tabs{display:flex;justify-content:center;gap:10px;margin-bottom:25px;flex-wrap:wrap}
+.tab{padding:12px 25px;border-radius:25px;cursor:pointer;font-weight:bold;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);transition:all 0.3s}
+.tab.active{background:linear-gradient(90deg,#f5af19,#f12711);color:#000;border-color:transparent}
+.tab:hover{background:rgba(255,255,255,0.2)}
+.panel{display:none}.panel.active{display:block}
+.card{background:rgba(0,0,0,0.4);border-radius:15px;padding:20px;margin-bottom:20px;max-width:1000px;margin-left:auto;margin-right:auto}
+.card h2{color:#f5af19;margin-bottom:15px;text-align:center}
+table{width:100%;border-collapse:collapse}
+th{background:rgba(255,255,255,0.1);padding:12px 10px;text-align:left;font-size:0.85em}
+td{padding:10px;border-bottom:1px solid rgba(255,255,255,0.08);font-size:0.85em}
+tr:hover{background:rgba(255,255,255,0.05)}
+.shame-leader{background:rgba(255,0,0,0.15)!important}
+.badge{display:inline-block;padding:3px 8px;border-radius:10px;font-size:0.75em}
+.badge-gs{background:#4CAF50;color:#fff}
+.badge-r32{background:#2196F3;color:#fff}
+.badge-r16{background:#9C27B0;color:#fff}
+.badge-qf{background:#FF9800;color:#fff}
+.badge-sf{background:#f44336;color:#fff}
+.badge-final{background:#FFD700;color:#000}
+.badge-out{background:#555;color:#aaa}
+.badge-winner{background:#FFD700;color:#000;font-weight:bold}
+.shame-bar{height:8px;border-radius:4px;background:rgba(255,255,255,0.1);overflow:hidden;margin-top:4px;width:100px;display:inline-block}
+.shame-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,#4CAF50,#FF9800,#f44336);transition:width 0.5s}
+.status-bar{text-align:center;padding:10px;color:#888;font-size:0.8em;margin-top:15px}
+.cache-info{color:#4CAF50;font-size:0.75em}
+.match-card{padding:12px;border-bottom:1px solid rgba(255,255,255,0.08);display:flex;justify-content:space-between;align-items:center}
+.match-score{color:#f5af19;font-weight:bold;font-size:1.1em;min-width:50px;text-align:center}
+.match-team{min-width:120px}
+.match-team.home{text-align:right}
+.match-team.away{text-align:left}
+.refresh-btn{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.3);color:#fff;padding:8px 16px;border-radius:20px;cursor:pointer;font-size:0.8em;margin-left:10px}
+.refresh-btn:hover{background:rgba(255,255,255,0.2)}
+</style>
+</head>
+<body>
+<div class="header"><h1>⚽ World Cup 2026 Sweepstake Tracker</h1><p>Design Engineering Controls Team</p></div>
+<div class="tabs">
+<div class="tab active" onclick="showPanel('shame')">🥄 Wooden Spoon</div>
+<div class="tab" onclick="showPanel('teams')">📋 Team Progress</div>
+<div class="tab" onclick="showPanel('matches')">⚽ Recent Matches</div>
+</div>
+<div class="panel active" id="shame">
+<div class="card"><h2>🥄 Wooden Spoon Leaderboard</h2>
+<p style="text-align:center;color:#aaa;margin-bottom:15px;font-size:0.85em">Average shame per team | Highest score = Wooden Spoon winner 🥄 | Formula: (Goals Against + Yellows×2 + Reds×5 − Goals For) ÷ Number of Teams</p>
+<table><thead><tr><th>#</th><th>Name</th><th>Teams</th><th>GF</th><th>GA</th><th>🟨</th><th>🟥</th><th>Avg Shame</th><th></th></tr></thead>
+<tbody id="shameBody"></tbody></table></div></div>
+<div class="panel" id="teams">
+<div class="card"><h2>📋 Team Progress</h2>
+<table><thead><tr><th>Owner</th><th>Team</th><th>Grp</th><th>Stage</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GF</th><th>GA</th><th>🟨</th><th>🟥</th></tr></thead>
+<tbody id="teamsBody"></tbody></table></div></div>
+<div class="panel" id="matches">
+<div class="card"><h2>⚽ Recent Matches</h2><div id="matchesList"></div></div></div>
+<div class="status-bar" id="statusBar">Loading...</div>
+<script>
+// ===== CONFIG =====
+// Get FREE API key: https://www.api-football.com/ (100 req/day)
+const API_KEY = '716e81beaffba9576a319751d1946adb';
+const LEAGUE_ID = 1; // World Cup ID on api-football
+const SEASON = 2026;
+const CACHE_DURATION = 30 * 60 * 1000; // 30 minutes in ms
+const CACHE_KEY = 'wc2026_tracker_cache';
+
+// ===== DRAW ASSIGNMENTS =====
+const assignments = {
+  "Jon Gray":{teams:["Germany","Egypt","Qatar"],count:3},
+  "Aaron Boyne":{teams:["Spain","Ecuador"],count:2},
+  "Anirudh Sampath":{teams:["Japan","Austria"],count:2},
+  "Anshuman Bhalla":{teams:["USA","Congo DR"],count:2},
+  "Bill Wang":{teams:["Colombia","Czechia"],count:2},
+  "Bryan Bourne":{teams:["Portugal","IR Iran","Jordan"],count:3},
+  "Dhaval Shah":{teams:["Senegal","Korea Republic","Ghana"],count:3},
+  "Erik Johansson":{teams:["Argentina","Paraguay","Uzbekistan"],count:3},
+  "Jessica Stearns":{teams:["Mexico","Norway"],count:2},
+  "Joe LeBeau":{teams:["Switzerland","Sweden","Cabo Verde"],count:3},
+  "Mark Chen":{teams:["Netherlands","Panama","Saudi Arabia"],count:3},
+  "Michael Toulouse":{teams:["Croatia","Scotland","New Zealand"],count:3},
+  "Milos Pavlovic":{teams:["Uruguay","Tunisia","South Africa"],count:3},
+  "Nihar Shah":{teams:["Morocco","Australia","Bosnia & Herz."],count:3},
+  "Orla Morley":{teams:["England","Canada","Curaçao"],count:3},
+  "Ray Hoelting":{teams:["Brazil","Algeria"],count:2},
+  "Sean Rafter":{teams:["Belgium","Côte d'Ivoire","Iraq"],count:3},
+  "Soheil Alaghmandan":{teams:["France","Türkiye","Haiti"],count:3},
+};
+
+// API team name -> our name mapping
+const nameMap={"Germany":"Germany","Egypt":"Egypt","Qatar":"Qatar","Spain":"Spain","Ecuador":"Ecuador","Japan":"Japan","Austria":"Austria","USA":"USA","United States":"USA","DR Congo":"Congo DR","Congo DR":"Congo DR","Congo":"Congo DR","Colombia":"Colombia","Czech Republic":"Czechia","Czechia":"Czechia","Portugal":"Portugal","Iran":"IR Iran","IR Iran":"IR Iran","Jordan":"Jordan","Senegal":"Senegal","South Korea":"Korea Republic","Korea Republic":"Korea Republic","Korea":"Korea Republic","Ghana":"Ghana","Argentina":"Argentina","Paraguay":"Paraguay","Uzbekistan":"Uzbekistan","Mexico":"Mexico","Norway":"Norway","Switzerland":"Switzerland","Sweden":"Sweden","Cape Verde":"Cabo Verde","Cabo Verde":"Cabo Verde","Netherlands":"Netherlands","Panama":"Panama","Saudi Arabia":"Saudi Arabia","Croatia":"Croatia","Scotland":"Scotland","New Zealand":"New Zealand","Uruguay":"Uruguay","Tunisia":"Tunisia","South Africa":"South Africa","Morocco":"Morocco","Australia":"Australia","Bosnia And Herzegovina":"Bosnia & Herz.","Bosnia Herzegovina":"Bosnia & Herz.","Bosnia & Herz.":"Bosnia & Herz.","England":"England","Canada":"Canada","Curaçao":"Curaçao","Curacao":"Curaçao","Brazil":"Brazil","Algeria":"Algeria","Belgium":"Belgium","Ivory Coast":"Côte d'Ivoire","Côte d'Ivoire":"Côte d'Ivoire","Cote D'Ivoire":"Côte d'Ivoire","Iraq":"Iraq","France":"France","Turkey":"Türkiye","Türkiye":"Türkiye","Haiti":"Haiti"};
+
+const groups={"A":["Mexico","South Africa","Korea Republic","Czechia"],"B":["Canada","Bosnia & Herz.","Qatar","Switzerland"],"C":["Brazil","Morocco","Haiti","Scotland"],"D":["USA","Paraguay","Türkiye","Australia"],"E":["Germany","Curaçao","Côte d'Ivoire","Ecuador"],"F":["Netherlands","Japan","Sweden","Tunisia"],"G":["Belgium","Egypt","IR Iran","New Zealand"],"H":["Spain","Cabo Verde","Saudi Arabia","Uruguay"],"I":["France","Senegal","Iraq","Norway"],"J":["Argentina","Algeria","Austria","Jordan"],"K":["Portugal","Congo DR","Uzbekistan","Colombia"],"L":["England","Croatia","Ghana","Panama"]};
+
+function getGroup(team){for(let g in groups){if(groups[g].includes(team))return g;}return '?';}
+
+// ===== STATE =====
+let teamStats={};
+let matchResults=[];
+Object.values(assignments).forEach(a=>{a.teams.forEach(t=>{teamStats[t]={gf:0,ga:0,yellows:0,reds:0,played:0,won:0,drawn:0,lost:0,stage:'Group Stage'};});});
+
+// ===== CACHING =====
+function getCache(){
+  try{
+    const cached=localStorage.getItem(CACHE_KEY);
+    if(!cached)return null;
+    const data=JSON.parse(cached);
+    if(Date.now()-data.timestamp > CACHE_DURATION)return null;
+    return data;
+  }catch(e){return null;}
+}
+
+function setCache(stats,matches){
+  try{
+    localStorage.setItem(CACHE_KEY,JSON.stringify({timestamp:Date.now(),teamStats:stats,matches:matches}));
+  }catch(e){}
+}
+
+function getCacheAge(){
+  try{
+    const cached=localStorage.getItem(CACHE_KEY);
+    if(!cached)return null;
+    const data=JSON.parse(cached);
+    return Math.round((Date.now()-data.timestamp)/60000);
+  }catch(e){return null;}
+}
+
+// ===== UI FUNCTIONS =====
+function showPanel(id){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+function calcShame(person){
+  const a=assignments[person];let total=0;
+  a.teams.forEach(t=>{const s=teamStats[t];if(s)total+=(s.ga)+(s.yellows*2)+(s.reds*5)-(s.gf);});
+  return total/a.count;
+}
+
+function renderShame(){
+  const sorted=Object.keys(assignments).map(p=>({
+    name:p,count:assignments[p].count,
+    teams:assignments[p].teams,
+    gf:assignments[p].teams.reduce((s,t)=>s+(teamStats[t]?.gf||0),0),
+    ga:assignments[p].teams.reduce((s,t)=>s+(teamStats[t]?.ga||0),0),
+    yellows:assignments[p].teams.reduce((s,t)=>s+(teamStats[t]?.yellows||0),0),
+    reds:assignments[p].teams.reduce((s,t)=>s+(teamStats[t]?.reds||0),0),
+    avg:calcShame(p)
+  })).sort((a,b)=>b.avg-a.avg);
+  const maxShame=Math.max(...sorted.map(s=>s.avg),1);
+  document.getElementById('shameBody').innerHTML=sorted.map((p,i)=>{
+    const bw=Math.max(0,(p.avg/maxShame)*100);
+    const cls=i===0&&p.avg>0?'shame-leader':'';
+    return `<tr class="${cls}"><td>${i+1}${i===0&&p.avg>0?' 🥄':''}</td><td><strong>${p.name}</strong></td><td>${p.count}</td><td>${p.gf}</td><td>${p.ga}</td><td>${p.yellows}</td><td>${p.reds}</td><td><strong>${p.avg.toFixed(1)}</strong></td><td><div class="shame-bar"><div class="shame-fill" style="width:${bw}%"></div></div></td></tr>`;
+  }).join('');
+}
+
+function renderTeams(){
+  let rows='';
+  Object.entries(assignments).sort((a,b)=>a[0].localeCompare(b[0])).forEach(([person,data])=>{
+    data.teams.forEach((team,i)=>{
+      const s=teamStats[team]||{};const g=getGroup(team);
+      const stage=s.stage||'Group Stage';
+      const bc=stage==='Eliminated'?'badge-out':stage.includes('Final')&&!stage.includes('Quarter')&&!stage.includes('Semi')?'badge-final':stage.includes('Semi')?'badge-sf':stage.includes('Quarter')?'badge-qf':stage.includes('16')?'badge-r16':stage.includes('32')?'badge-r32':'badge-gs';
+      rows+=`<tr><td>${i===0?'<strong>'+person+'</strong>':''}</td><td>${team}</td><td>${g}</td><td><span class="badge ${bc}">${stage}</span></td><td>${s.played||0}</td><td>${s.won||0}</td><td>${s.drawn||0}</td><td>${s.lost||0}</td><td>${s.gf||0}</td><td>${s.ga||0}</td><td>${s.yellows||0}</td><td>${s.reds||0}</td></tr>`;
+    });
+  });
+  document.getElementById('teamsBody').innerHTML=rows;
+}
+
+function renderMatches(){
+  const div=document.getElementById('matchesList');
+  if(matchResults.length===0){div.innerHTML='<p style="text-align:center;color:#aaa;padding:20px">No matches played yet. The tournament starts June 11!</p>';return;}
+  div.innerHTML=matchResults.slice(0,30).map(m=>{
+    const ho=getOwner(m.home),ao=getOwner(m.away);
+    return `<div class="match-card"><span class="match-team home">${m.home}${ho?' <span style="color:#888;font-size:0.8em">('+ho.split(' ')[0]+')</span>':''}</span><span class="match-score">${m.homeGoals} - ${m.awayGoals}</span><span class="match-team away">${m.away}${ao?' <span style="color:#888;font-size:0.8em">('+ao.split(' ')[0]+')</span>':''}</span></div>`;
+  }).join('');
+}
+function getOwner(team){for(let p in assignments){if(assignments[p].teams.includes(team))return p;}return null;}
+
+function renderAll(){renderShame();renderTeams();renderMatches();}
+
+// ===== API FETCH (API-Football) =====
+async function fetchFromAPI(){
+  if(!API_KEY){
+    document.getElementById('statusBar').innerHTML='⚠️ No API key set. Get one free at <a href="https://www.api-football.com/" style="color:#f5af19">api-football.com</a> — paste it in the HTML file where it says API_KEY. <button class="refresh-btn" onclick="forceRefresh()">🔄 Retry</button>';
+    renderAll();return;
+  }
+  try{
+    document.getElementById('statusBar').textContent='Fetching live data...';
+    // Try direct first, fall back to CORS proxy (needed when opening from file://)
+    let resp;
+    const apiUrl = `https://v3.football.api-sports.io/fixtures?league=${LEAGUE_ID}&season=${SEASON}`;
+    try {
+      resp = await fetch(apiUrl, {headers:{'x-apisports-key':API_KEY}});
+      if(!resp.ok) throw new Error('Direct failed: '+resp.status);
+    } catch(e) {
+      // Fallback: use CORS proxy for local file:// usage
+      const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(apiUrl)}`;
+      resp = await fetch(proxyUrl, {headers:{'x-apisports-key':API_KEY}});
+    }
+    const data=await resp.json();
+    if(data.errors&&Object.keys(data.errors).length>0){
+      document.getElementById('statusBar').textContent='API Error: '+JSON.stringify(data.errors);
+      renderAll();return;
+    }
+    // Reset stats
+    Object.keys(teamStats).forEach(t=>{teamStats[t]={gf:0,ga:0,yellows:0,reds:0,played:0,won:0,drawn:0,lost:0,stage:'Group Stage'};});
+    matchResults=[];
+
+    const fixtures=data.response||[];
+    for(const fix of fixtures){
+      if(fix.fixture.status.short==='FT'||fix.fixture.status.short==='AET'||fix.fixture.status.short==='PEN'){
+        const home=nameMap[fix.teams.home.name]||fix.teams.home.name;
+        const away=nameMap[fix.teams.away.name]||fix.teams.away.name;
+        const hg=fix.goals.home||0,ag=fix.goals.away||0;
+        if(teamStats[home]){teamStats[home].gf+=hg;teamStats[home].ga+=ag;teamStats[home].played++;if(hg>ag)teamStats[home].won++;else if(hg===ag)teamStats[home].drawn++;else teamStats[home].lost++;}
+        if(teamStats[away]){teamStats[away].gf+=ag;teamStats[away].ga+=hg;teamStats[away].played++;if(ag>hg)teamStats[away].won++;else if(ag===hg)teamStats[away].drawn++;else teamStats[away].lost++;}
+        matchResults.push({home,away,homeGoals:hg,awayGoals:ag,date:fix.fixture.date});
+      }
+    }
+    // Fetch events (cards) for finished matches
+    const finishedIds=fixtures.filter(f=>['FT','AET','PEN'].includes(f.fixture.status.short)).map(f=>f.fixture.id);
+    // Batch: get events from fixture details (API-Football includes events in fixture response)
+    for(const fix of fixtures){
+      if(['FT','AET','PEN'].includes(fix.fixture.status.short)&&fix.events){
+        fix.events.forEach(ev=>{
+          const team=nameMap[ev.team.name]||ev.team.name;
+          if(teamStats[team]){
+            if(ev.type==='Card'&&ev.detail==='Yellow Card')teamStats[team].yellows++;
+            if(ev.type==='Card'&&ev.detail==='Red Card')teamStats[team].reds++;
+          }
+        });
+      }
+    }
+    // Sort matches by date descending
+    matchResults.sort((a,b)=>new Date(b.date)-new Date(a.date));
+    // Cache results
+    setCache(teamStats,matchResults);
+    const now=new Date().toLocaleString();
+    document.getElementById('statusBar').innerHTML='✅ Live data loaded | Last updated: '+now+' <span class="cache-info">(cached for 30 min)</span> <button class="refresh-btn" onclick="forceRefresh()">🔄 Force Refresh</button>';
+  }catch(e){
+    document.getElementById('statusBar').innerHTML='❌ Error: '+e.message+'<br><small>If opening locally, try serving via a local web server (python3 -m http.server) or check browser console (F12) for details.</small>';
+  }
+  renderAll();
+}
+
+function forceRefresh(){localStorage.removeItem(CACHE_KEY);fetchFromAPI();}
+
+// ===== INIT =====
+(async function init(){
+  const cached=getCache();
+  if(cached){
+    teamStats=cached.teamStats;matchResults=cached.matches||[];
+    const age=getCacheAge();
+    document.getElementById('statusBar').innerHTML='📦 Loaded from cache ('+age+' min ago) <button class="refresh-btn" onclick="forceRefresh()">🔄 Force Refresh</button>';
+    renderAll();
+  }else{
+    await fetchFromAPI();
+  }
+})();
+</script></body></html>
