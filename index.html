@@ -191,6 +191,7 @@ function renderAll(){renderShame();renderTeams();renderMatches();}
 // ===== MATCH DATA (manually updated) =====
 const matchData = [
   {date:"2026-06-11",home:"Mexico",away:"South Africa",hg:2,ag:0,hy:1,hr:1,ay:2,ar:2},
+  {date:"2026-06-12",home:"Korea Republic",away:"Czechia",hg:2,ag:1,hy:1,hr:0,ay:0,ar:0},
 ];
 
 function loadMatchData(){
@@ -206,7 +207,7 @@ function loadMatchData(){
   });
   
   matchResults.sort((a,b)=>new Date(b.date)-new Date(a.date));
-  document.getElementById('statusBar').innerHTML='✅ Data loaded | Last updated: June 11, 2026 | Matchday 1';
+  document.getElementById('statusBar').innerHTML='✅ Data loaded | Last updated: June 12, 2026 | Matchday 1';
   renderAll();
 }
 
