@@ -198,6 +198,10 @@ const matchData = [
   {date:"2026-06-13",home:"Brazil",away:"Morocco",hg:1,ag:1,hy:2,hr:0,ay:0,ar:0},
   {date:"2026-06-14",home:"Haiti",away:"Scotland",hg:0,ag:1,hy:1,hr:0,ay:3,ar:0},
   {date:"2026-06-14",home:"Australia",away:"Türkiye",hg:2,ag:0,hy:0,hr:0,ay:1,ar:0},
+  {date:"2026-06-14",home:"Germany",away:"Curaçao",hg:7,ag:1,hy:0,hr:0,ay:0,ar:0},
+  {date:"2026-06-14",home:"Netherlands",away:"Japan",hg:2,ag:2,hy:3,hr:0,ay:0,ar:0},
+  {date:"2026-06-15",home:"Côte d'Ivoire",away:"Ecuador",hg:1,ag:0,hy:3,hr:0,ay:1,ar:0},
+  {date:"2026-06-15",home:"Sweden",away:"Tunisia",hg:5,ag:1,hy:0,hr:0,ay:1,ar:0},
 ];
 
 function loadMatchData(){
@@ -213,7 +217,7 @@ function loadMatchData(){
   });
   
   matchResults.sort((a,b)=>new Date(b.date)-new Date(a.date));
-  document.getElementById('statusBar').innerHTML='✅ Data loaded | Last updated: June 14, 2026 | Matchdays 1-3';
+  document.getElementById('statusBar').innerHTML='✅ Data loaded | Last updated: June 15, 2026 | Matchdays 1-4';
   renderAll();
 }
 
