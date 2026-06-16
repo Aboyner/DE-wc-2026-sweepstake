@@ -36,7 +36,7 @@ tr:hover{background:rgba(255,255,255,0.05)}
 .cache-info{color:#4CAF50;font-size:0.75em}
 .match-card{padding:12px;border-bottom:1px solid rgba(255,255,255,0.08);display:flex;justify-content:space-between;align-items:center}
 .match-score{color:#f5af19;font-weight:bold;font-size:1.1em;min-width:50px;text-align:center}
-.match-team{min-width:120px}
+.match-team{min-width:140px}.match-team.home{text-align:right}.match-team.away{text-align:left}
 .match-team.home{text-align:right}
 .match-team.away{text-align:left}
 .refresh-btn{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.3);color:#fff;padding:8px 16px;border-radius:20px;cursor:pointer;font-size:0.8em;margin-left:10px}
@@ -60,7 +60,8 @@ tr:hover{background:rgba(255,255,255,0.05)}
 <table><thead><tr><th>Owner</th><th>Team</th><th>Grp</th><th>Stage</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GF</th><th>GA</th><th>🟨</th><th>🟥</th></tr></thead>
 <tbody id="teamsBody"></tbody></table></div></div>
 <div class="panel" id="matches">
-<div class="card"><h2>⚽ Recent Matches</h2><div id="matchesList"></div></div></div>
+<div class="card"><h2>⚽ Recent Results</h2><div id="matchesList"></div></div>
+<div class="card"><h2>📅 Upcoming Fixtures</h2><div id="fixturesList"></div></div></div>
 <div class="status-bar" id="statusBar">Loading...</div>
 <script>
 // ===== CONFIG =====
@@ -178,16 +179,88 @@ function renderTeams(){
 
 function renderMatches(){
   const div=document.getElementById('matchesList');
-  if(matchResults.length===0){div.innerHTML='<p style="text-align:center;color:#aaa;padding:20px">No matches played yet. The tournament starts June 11!</p>';return;}
+  if(matchResults.length===0){div.innerHTML='<p style="text-align:center;color:#aaa;padding:20px">No completed matches to show.</p>';return;}
   div.innerHTML=matchResults.slice(0,30).map(m=>{
     const ho=getOwner(m.home),ao=getOwner(m.away);
-    return `<div class="match-card"><span class="match-team home">${m.home}${ho?' <span style="color:#888;font-size:0.8em">('+ho.split(' ')[0]+')</span>':''}</span><span class="match-score">${m.homeGoals} - ${m.awayGoals}</span><span class="match-team away">${m.away}${ao?' <span style="color:#888;font-size:0.8em">('+ao.split(' ')[0]+')</span>':''}</span></div>`;
+    const d=new Date(m.date);const dateStr=d.toLocaleDateString('en-GB',{day:'numeric',month:'short'});
+    return `<div class="match-card"><span style="color:#666;font-size:0.75em;min-width:50px">${dateStr}</span><span class="match-team home">${m.home}${ho?' <span style="color:#888;font-size:0.7em">('+ho.split(' ')[0]+')</span>':''}</span><span class="match-score">${m.homeGoals} - ${m.awayGoals}</span><span class="match-team away">${m.away}${ao?' <span style="color:#888;font-size:0.7em">('+ao.split(' ')[0]+')</span>':''}</span></div>`;
   }).join('');
 }
 function getOwner(team){for(let p in assignments){if(assignments[p].teams.includes(team))return p;}return null;}
 
-function renderAll(){renderShame();renderTeams();renderMatches();}
+function renderFixtures(){
+  const div=document.getElementById('fixturesList');
+  if(!upcomingFixtures||upcomingFixtures.length===0){div.innerHTML='<p style="text-align:center;color:#aaa">No upcoming fixtures.</p>';return;}
+  const today=new Date().toISOString().split('T')[0];
+  const upcoming=upcomingFixtures.filter(f=>f.date>=today).slice(0,20);
+  div.innerHTML=upcoming.map(f=>{
+    const d=new Date(f.date);const dateStr=d.toLocaleDateString('en-GB',{day:'numeric',month:'short'});
+    const ho=getOwner(f.home),ao=getOwner(f.away);
+    return `<div class="match-card"><span style="color:#666;font-size:0.75em;min-width:50px">${dateStr}</span><span class="match-team home">${f.home}${ho?' <span style="color:#888;font-size:0.7em">('+ho.split(' ')[0]+')</span>':''}</span><span class="match-score" style="color:#666">vs</span><span class="match-team away">${f.away}${ao?' <span style="color:#888;font-size:0.7em">('+ao.split(' ')[0]+')</span>':''}</span></div>`;
+  }).join('');
+}
+function renderAll(){renderShame();renderTeams();renderMatches();renderFixtures();}
 
+
+// ===== UPCOMING FIXTURES =====
+const upcomingFixtures = [
+  {date:"2026-06-16",home:"France",away:"Senegal"},
+  {date:"2026-06-16",home:"Iraq",away:"Norway"},
+  {date:"2026-06-17",home:"Argentina",away:"Algeria"},
+  {date:"2026-06-17",home:"Austria",away:"Jordan"},
+  {date:"2026-06-17",home:"Portugal",away:"Congo DR"},
+  {date:"2026-06-17",home:"England",away:"Croatia"},
+  {date:"2026-06-18",home:"Ghana",away:"Panama"},
+  {date:"2026-06-18",home:"Uzbekistan",away:"Colombia"},
+  {date:"2026-06-18",home:"Czechia",away:"South Africa"},
+  {date:"2026-06-18",home:"Switzerland",away:"Bosnia & Herz."},
+  {date:"2026-06-18",home:"Canada",away:"Qatar"},
+  {date:"2026-06-19",home:"Mexico",away:"Korea Republic"},
+  {date:"2026-06-19",home:"USA",away:"Australia"},
+  {date:"2026-06-19",home:"Scotland",away:"Morocco"},
+  {date:"2026-06-20",home:"Brazil",away:"Haiti"},
+  {date:"2026-06-20",home:"Türkiye",away:"Paraguay"},
+  {date:"2026-06-20",home:"Netherlands",away:"Sweden"},
+  {date:"2026-06-20",home:"Germany",away:"Côte d'Ivoire"},
+  {date:"2026-06-21",home:"Ecuador",away:"Curaçao"},
+  {date:"2026-06-21",home:"Tunisia",away:"Japan"},
+  {date:"2026-06-21",home:"Spain",away:"Saudi Arabia"},
+  {date:"2026-06-21",home:"Belgium",away:"IR Iran"},
+  {date:"2026-06-21",home:"Uruguay",away:"Cabo Verde"},
+  {date:"2026-06-22",home:"New Zealand",away:"Egypt"},
+  {date:"2026-06-22",home:"Argentina",away:"Austria"},
+  {date:"2026-06-22",home:"France",away:"Iraq"},
+  {date:"2026-06-23",home:"Norway",away:"Senegal"},
+  {date:"2026-06-23",home:"Jordan",away:"Algeria"},
+  {date:"2026-06-23",home:"Portugal",away:"Uzbekistan"},
+  {date:"2026-06-23",home:"England",away:"Ghana"},
+  {date:"2026-06-24",home:"Panama",away:"Croatia"},
+  {date:"2026-06-24",home:"Colombia",away:"Congo DR"},
+  {date:"2026-06-24",home:"Bosnia & Herz.",away:"Qatar"},
+  {date:"2026-06-24",home:"Switzerland",away:"Canada"},
+  {date:"2026-06-24",home:"Morocco",away:"Haiti"},
+  {date:"2026-06-24",home:"Scotland",away:"Brazil"},
+  {date:"2026-06-25",home:"Czechia",away:"Mexico"},
+  {date:"2026-06-25",home:"South Africa",away:"Korea Republic"},
+  {date:"2026-06-25",home:"Curaçao",away:"Côte d'Ivoire"},
+  {date:"2026-06-25",home:"Ecuador",away:"Germany"},
+  {date:"2026-06-26",home:"Japan",away:"Sweden"},
+  {date:"2026-06-26",home:"Tunisia",away:"Netherlands"},
+  {date:"2026-06-26",home:"Paraguay",away:"Australia"},
+  {date:"2026-06-26",home:"Türkiye",away:"USA"},
+  {date:"2026-06-26",home:"Norway",away:"France"},
+  {date:"2026-06-26",home:"Senegal",away:"Iraq"},
+  {date:"2026-06-27",home:"Cabo Verde",away:"Saudi Arabia"},
+  {date:"2026-06-27",home:"Uruguay",away:"Spain"},
+  {date:"2026-06-27",home:"Egypt",away:"IR Iran"},
+  {date:"2026-06-27",home:"New Zealand",away:"Belgium"},
+  {date:"2026-06-27",home:"Croatia",away:"Ghana"},
+  {date:"2026-06-27",home:"Panama",away:"England"},
+  {date:"2026-06-28",home:"Colombia",away:"Portugal"},
+  {date:"2026-06-28",home:"Congo DR",away:"Uzbekistan"},
+  {date:"2026-06-28",home:"Algeria",away:"Austria"},
+  {date:"2026-06-28",home:"Jordan",away:"Argentina"},
+];
 // ===== MATCH DATA (manually updated) =====
 const matchData = [
   {date:"2026-06-11",home:"Mexico",away:"South Africa",hg:2,ag:0,hy:1,hr:1,ay:2,ar:2},
@@ -202,6 +275,10 @@ const matchData = [
   {date:"2026-06-14",home:"Netherlands",away:"Japan",hg:2,ag:2,hy:3,hr:0,ay:0,ar:0},
   {date:"2026-06-15",home:"Côte d'Ivoire",away:"Ecuador",hg:1,ag:0,hy:3,hr:0,ay:1,ar:0},
   {date:"2026-06-15",home:"Sweden",away:"Tunisia",hg:5,ag:1,hy:0,hr:0,ay:1,ar:0},
+  {date:"2026-06-15",home:"Spain",away:"Cabo Verde",hg:0,ag:0,hy:1,hr:0,ay:1,ar:0},
+  {date:"2026-06-15",home:"Belgium",away:"Egypt",hg:1,ag:1,hy:2,hr:0,ay:2,ar:0},
+  {date:"2026-06-15",home:"Saudi Arabia",away:"Uruguay",hg:1,ag:1,hy:1,hr:0,ay:0,ar:0},
+  {date:"2026-06-16",home:"IR Iran",away:"New Zealand",hg:2,ag:2,hy:1,hr:0,ay:0,ar:0},
 ];
 
 function loadMatchData(){
@@ -217,7 +294,7 @@ function loadMatchData(){
   });
   
   matchResults.sort((a,b)=>new Date(b.date)-new Date(a.date));
-  document.getElementById('statusBar').innerHTML='✅ Data loaded | Last updated: June 15, 2026 | Matchdays 1-4';
+  document.getElementById('statusBar').innerHTML='✅ Data loaded | Last updated: June 16, 2026 | 16 matches played';
   renderAll();
 }
 
