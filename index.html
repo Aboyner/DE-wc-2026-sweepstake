@@ -291,6 +291,26 @@ const matchData = [
   {date:"2026-06-18",home:"Switzerland",away:"Bosnia & Herz.",hg:4,ag:1,hy:1,hr:0,ay:2,ar:1},
   {date:"2026-06-18",home:"Canada",away:"Qatar",hg:6,ag:0,hy:1,hr:0,ay:1,ar:2},
   {date:"2026-06-19",home:"Mexico",away:"Korea Republic",hg:1,ag:0,hy:0,hr:0,ay:2,ar:0},
+  {date:"2026-06-19",home:"USA",away:"Australia",hg:2,ag:0,hy:3,hr:0,ay:4,ar:0},
+  {date:"2026-06-19",home:"Scotland",away:"Morocco",hg:0,ag:1,hy:1,hr:0,ay:1,ar:0},
+  {date:"2026-06-20",home:"Brazil",away:"Haiti",hg:3,ag:0,hy:1,hr:0,ay:3,ar:0},
+  {date:"2026-06-20",home:"Türkiye",away:"Paraguay",hg:0,ag:1,hy:2,hr:0,ay:1,ar:1},
+  {date:"2026-06-20",home:"Netherlands",away:"Sweden",hg:5,ag:1,hy:0,hr:0,ay:3,ar:0},
+  {date:"2026-06-20",home:"Germany",away:"Côte d'Ivoire",hg:2,ag:1,hy:0,hr:0,ay:0,ar:0},
+  {date:"2026-06-21",home:"Tunisia",away:"Japan",hg:0,ag:4,hy:0,hr:0,ay:0,ar:0},
+  {date:"2026-06-21",home:"Ecuador",away:"Curaçao",hg:0,ag:0,hy:1,hr:0,ay:5,ar:0},
+  {date:"2026-06-21",home:"Spain",away:"Saudi Arabia",hg:4,ag:0,hy:0,hr:0,ay:2,ar:0},
+  {date:"2026-06-21",home:"Belgium",away:"IR Iran",hg:0,ag:0,hy:1,hr:1,ay:1,ar:0},
+  {date:"2026-06-21",home:"Uruguay",away:"Cabo Verde",hg:2,ag:2,hy:2,hr:0,ay:2,ar:0},
+  {date:"2026-06-22",home:"New Zealand",away:"Egypt",hg:1,ag:3,hy:2,hr:0,ay:1,ar:0},
+  {date:"2026-06-22",home:"Argentina",away:"Austria",hg:2,ag:0,hy:2,hr:0,ay:2,ar:0},
+  {date:"2026-06-22",home:"France",away:"Iraq",hg:3,ag:0,hy:0,hr:0,ay:1,ar:0},
+  {date:"2026-06-23",home:"Norway",away:"Senegal",hg:3,ag:2,hy:0,hr:0,ay:0,ar:0},
+  {date:"2026-06-23",home:"Jordan",away:"Algeria",hg:1,ag:2,hy:1,hr:0,ay:1,ar:0},
+  {date:"2026-06-23",home:"Portugal",away:"Uzbekistan",hg:5,ag:0,hy:1,hr:0,ay:1,ar:0},
+  {date:"2026-06-23",home:"England",away:"Ghana",hg:0,ag:0,hy:1,hr:0,ay:1,ar:0},
+  {date:"2026-06-24",home:"Panama",away:"Croatia",hg:0,ag:1,hy:1,hr:0,ay:1,ar:0},
+  {date:"2026-06-24",home:"Colombia",away:"Congo DR",hg:1,ag:0,hy:2,hr:0,ay:1,ar:0},
 ];
 
 function loadMatchData(){
@@ -306,7 +326,7 @@ function loadMatchData(){
   });
   
   matchResults.sort((a,b)=>new Date(b.date)-new Date(a.date));
-  document.getElementById('statusBar').innerHTML='✅ Data loaded | Last updated: June 19, 2026 | 28 matches played';
+  document.getElementById('statusBar').innerHTML='✅ Data loaded | Last updated: June 24, 2026 | 48 matches played';
   renderAll();
 }
 
