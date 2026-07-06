@@ -67,28 +67,28 @@ tr:hover{background:rgba(255,255,255,0.05)}
 
   <div class="panel" id="bracket">
     <div class="card"><h2>🏆 Knockout Bracket</h2>
-    <p style="color:#888;text-align:center">Round of 16 → Quarter-Finals → Semi-Finals → Final</p>
+    <p style="color:#888;text-align:center">Round of 32 ✅ → Round of 16 (in progress) → Quarter-Finals → Semi-Finals → Final</p>
     <div style="overflow-x:auto">
     <table style="width:100%;font-size:0.85em">
-    <tr><th>Round of 32</th><th>Round of 16</th><th>Quarter-Final</th><th>Semi-Final</th><th>Final</th></tr>
-    <tr><td>🇵🇾 Paraguay (pen) ✅</td><td rowspan="2">Paraguay vs France (Jul 4)</td><td rowspan="4">TBD (Jul 9)</td><td rowspan="8">TBD (Jul 14)</td><td rowspan="16">🏆 Final (Jul 19)</td></tr>
+    <tr><th>Round of 32 ✅</th><th>Round of 16</th><th>Quarter-Final</th><th>Semi-Final</th><th>Final</th></tr>
+    <tr><td>🇵🇾 Paraguay (pen) ✅</td><td rowspan="2" style="background:rgba(255,255,255,0.05)">🇫🇷 France 1-0 ✅</td><td rowspan="4">France vs Norway (Jul 9)</td><td rowspan="8">TBD (Jul 14)</td><td rowspan="16">🏆 Final (Jul 19)</td></tr>
     <tr><td>🇫🇷 France ✅</td></tr>
-    <tr><td>🇨🇦 Canada ✅</td><td rowspan="2">Canada vs Morocco (Jul 4)</td></tr>
+    <tr><td>🇨🇦 Canada ✅</td><td rowspan="2" style="background:rgba(255,255,255,0.05)">🇲🇦 Morocco 3-0 ✅</td></tr>
     <tr><td>🇲🇦 Morocco (pen) ✅</td></tr>
-    <tr><td>🇧🇷 Brazil ✅</td><td rowspan="2">Brazil vs Norway (Jul 5)</td><td rowspan="4">TBD (Jul 11)</td></tr>
+    <tr><td>🇧🇷 Brazil ✅</td><td rowspan="2" style="background:rgba(255,255,255,0.05)">🇳🇴 Norway 2-1 ✅</td><td rowspan="4">England vs Norway (Jul 11)</td></tr>
     <tr><td>🇳🇴 Norway ✅</td></tr>
-    <tr><td>🇲🇽 Mexico ✅</td><td rowspan="2">Mexico vs England (Jul 6)</td></tr>
+    <tr><td>🇲🇽 Mexico ✅</td><td rowspan="2" style="background:rgba(255,255,255,0.05)">🏴󠁧󠁢󠁥󠁮󠁧󠁿 England 3-2 ✅</td></tr>
     <tr><td>🏴󠁧󠁢󠁥󠁮󠁧󠁿 England ✅</td></tr>
     <tr><td>🇵🇹 Portugal ✅</td><td rowspan="2">Portugal vs Spain (Jul 6)</td><td rowspan="4">TBD (Jul 10)</td><td rowspan="8">TBD (Jul 15)</td></tr>
     <tr><td>🇪🇸 Spain ✅</td></tr>
     <tr><td>🇺🇸 USA ✅</td><td rowspan="2">USA vs Belgium (Jul 7)</td></tr>
     <tr><td>🇧🇪 Belgium ✅</td></tr>
-    <tr><td>🇦🇷 Argentina vs 🇨🇻 Cape Verde</td><td rowspan="2">TBD (Jul 7)</td><td rowspan="4">TBD (Jul 12)</td></tr>
-    <tr><td>🇦🇺 Australia vs 🇪🇬 Egypt (live)</td></tr>
-    <tr><td>🇨🇭 Switzerland ✅</td><td rowspan="2">Switzerland vs TBD (Jul 7)</td></tr>
-    <tr><td>🇨🇴 Colombia vs 🇬🇭 Ghana (Jul 4)</td></tr>
+    <tr><td>🇦🇷 Argentina (AET) ✅</td><td rowspan="2">Argentina vs Egypt (Jul 7)</td><td rowspan="4">TBD (Jul 12)</td></tr>
+    <tr><td>🇪🇬 Egypt (pen) ✅</td></tr>
+    <tr><td>🇨🇭 Switzerland ✅</td><td rowspan="2">Switzerland vs Colombia (Jul 7)</td></tr>
+    <tr><td>🇨🇴 Colombia ✅</td></tr>
     </table></div>
-    <p style="color:#888;text-align:center;margin-top:15px"><em>Bracket updates automatically as results are entered</em></p>
+    <p style="color:#888;text-align:center;margin-top:15px"><em>Bracket updates as results are entered</em></p>
     </div>
   </div><script>
 // ===== CONFIG =====
@@ -375,6 +375,13 @@ const matchData = [
   {date:"2026-07-02",home:"Spain",away:"Austria",hg:3,ag:0,hy:0,hr:0,ay:1,ar:0},
   {date:"2026-07-03",home:"Portugal",away:"Croatia",hg:2,ag:1,hy:1,hr:0,ay:2,ar:0},
   {date:"2026-07-03",home:"Switzerland",away:"Algeria",hg:2,ag:0,hy:0,hr:0,ay:2,ar:0},
+  {date:"2026-07-03",home:"Australia",away:"Egypt",hg:1,ag:1,hy:0,hr:0,ay:2,ar:0},
+  {date:"2026-07-03",home:"Argentina",away:"Cabo Verde",hg:3,ag:2,hy:1,hr:0,ay:1,ar:0},
+  {date:"2026-07-04",home:"Colombia",away:"Ghana",hg:1,ag:0,hy:2,hr:0,ay:3,ar:0},
+  {date:"2026-07-04",home:"Canada",away:"Morocco",hg:0,ag:3,hy:4,hr:0,ay:4,ar:0},
+  {date:"2026-07-04",home:"Paraguay",away:"France",hg:0,ag:1,hy:0,hr:0,ay:3,ar:0},
+  {date:"2026-07-05",home:"Brazil",away:"Norway",hg:1,ag:2,hy:1,hr:0,ay:0,ar:0},
+  {date:"2026-07-06",home:"Mexico",away:"England",hg:2,ag:3,hy:2,hr:0,ay:4,ar:1},
 ];
 
 function loadMatchData(){
